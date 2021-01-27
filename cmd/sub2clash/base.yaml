@@ -1,0 +1,76 @@
+port: 7890
+socks-port: 7891
+allow-lan: true
+mode: Rule
+log-level: debug
+# external-controller: 127.0.0.1:9090
+
+dns:
+  enable: true
+  ipv6: false
+  nameserver:
+    - 1.2.4.8
+    - 223.5.5.5
+  fallback:
+    - tls://1.0.0.1:853
+    - tls://dns.google:853
+  fallback-filter:
+    geoip: true
+    ipcidr:
+      - 240.0.0.0/4
+
+proxies: ~
+
+proxy-groups:
+  - name: SELECT
+    type: select
+    proxies:
+      - LB
+      - JP
+      - HK
+      - DIRECT
+  - url: http://www.gstatic.com/generate_204
+    interval: 300
+    name: LB
+    type: load-balance
+    strategy: round-robin
+    proxies:
+      - "all"
+  - url: http://clients1.google.co.jp/generate_204
+    interval: 300
+    name: JP
+    type: load-balance
+    strategy: round-robin
+    proxies:
+      - "jp"
+  - url: http://www.gstatic.com/generate_204
+    interval: 300
+    name: HK
+    type: load-balance
+    strategy: round-robin
+    proxies:
+      - "hk"
+
+rules:
+  # Local Area Network
+  - DOMAIN-SUFFIX,local,DIRECT
+  - IP-CIDR,127.0.0.0/8,DIRECT
+  - IP-CIDR,172.16.0.0/12,DIRECT
+  - IP-CIDR,192.168.0.0/16,DIRECT
+  - IP-CIDR,10.0.0.0/8,DIRECT
+  - IP-CIDR,17.0.0.0/8,DIRECT
+  - IP-CIDR,100.64.0.0/10,DIRECT
+
+  # GeoIP
+  - GEOIP,CN,DIRECT
+  - DOMAIN-SUFFIX,jp,JP
+  - GEOIP,JP,JP
+  - GEOIP,HK,HK
+
+  # 自定义
+  - MATCH,SELECT
+
+# 兼容
+Proxy: ~
+ProxyGroup: ~
+Rule: ~

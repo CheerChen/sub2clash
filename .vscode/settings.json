@@ -1,0 +1,6 @@
+{
+    "workbench.colorCustomizations": {
+        "activityBar.background": "#00add8"
+    },
+    "go.inferGopath": false
+}

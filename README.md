@@ -1,4 +1,4 @@
-# sub2clashr
+# sub2clash
 简单订阅转换
 
 ### 基本特点

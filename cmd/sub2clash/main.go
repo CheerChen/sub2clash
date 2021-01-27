@@ -10,8 +10,8 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/urfave/negroni"
 
-	"sub2clashr/clash"
-	"sub2clashr/conf"
+	"sub2clash/clash"
+	"sub2clash/conf"
 )
 
 var (

@@ -13,8 +13,8 @@ import (
 
 	"gopkg.in/yaml.v2"
 
-	"sub2clashr/conf"
-	"sub2clashr/log"
+	"sub2clash/conf"
+	"sub2clash/log"
 )
 
 type Clash struct {

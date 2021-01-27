@@ -1,4 +1,4 @@
-module sub2clashr
+module sub2clash
 
 go 1.12
 

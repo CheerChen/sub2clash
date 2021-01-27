@@ -3,7 +3,7 @@ package clash
 import (
 	"net/url"
 	"strings"
-	"sub2clashr/log"
+	"sub2clash/log"
 )
 
 type ClashSSR struct {

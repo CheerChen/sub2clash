@@ -4,7 +4,7 @@ import (
 	"net/url"
 	"regexp"
 	"strings"
-	"sub2clashr/log"
+	"sub2clash/log"
 )
 
 var ssReg = regexp.MustCompile(`(?m)ss://(\w+)@([^:]+):(\d+)#(.+)`)

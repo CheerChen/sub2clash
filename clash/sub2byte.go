@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github.com/parnurzeal/gorequest"
 	"net/url"
-	"sub2clashr/log"
+	"sub2clash/log"
 	"time"
 )
 

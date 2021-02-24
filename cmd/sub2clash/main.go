@@ -41,6 +41,7 @@ func main() {
 }
 
 // Sub 密钥获取订阅
+// curl "http://localhost:8081/sub?key=amy" -o config.yaml
 func Sub(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	key := r.URL.Query().Get("key")
 	if key != conf.Cfg.Key {
@@ -58,7 +59,7 @@ func Sub(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 // Convert 自由转换订阅
-// wget -O config.yaml -c "http://localhost:8081/convert?url={{urlencode}}
+// curl "http://localhost:8081/convert?url={{urlencode}}" -o config.yaml
 func Convert(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	decodedValue, err := url.QueryUnescape(r.URL.Query().Get("url"))
 	if err != nil {

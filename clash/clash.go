@@ -152,11 +152,11 @@ func Base64DecodeStripped(s string) ([]byte, error) {
 func filterNode(nodeName string) bool {
 	for _, keyword := range conf.Cfg.Filter {
 		if strings.Contains(nodeName, keyword) {
-			return true
+			return false
 		}
 	}
 
-	return false
+	return true
 }
 
 func ParseContent(content string) []interface{} {

@@ -1,5 +1,7 @@
 # sub2clash
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/CheerChen/sub2clash)](https://goreportcard.com/report/github.com/CheerChen/sub2clash)
+
 简单订阅转换
 
 ## 基本特点

@@ -3,29 +3,24 @@ socks-port: 7891
 allow-lan: true
 mode: Rule
 log-level: debug
-# external-controller: 127.0.0.1:9090
+external-controller: :9090
+external-ui: /ui
 
 dns:
   enable: true
   enhanced-mode: redir-host
   ipv6: false
   nameserver:
-    - 1.2.4.8
+    - 119.29.29.29
+    - 45.90.28.57
     - 223.5.5.5
   fallback:
-    - tls://1.0.0.1:853
-    - tls://dns.google:853
+    - 114.114.114.114
+    - tls://8.8.8.8:853
   fallback-filter:
     geoip: true
     ipcidr:
       - 240.0.0.0/4
-tun:
-  enable: true
-  stack: system
-  dns-hijack:
-    - 1.2.4.8
-  macOS-auto-route: true
-  macOS-auto-detect-interface: false
 
 proxies: ~
 
@@ -33,29 +28,26 @@ proxy-groups:
   - name: SELECT
     type: select
     proxies:
-      - LB
+      - UT
       - JP
       - HK
       - DIRECT
   - url: http://www.gstatic.com/generate_204
-    interval: 300
-    name: LB
-    type: load-balance
-    strategy: round-robin
+    interval: 3600
+    name: UT
+    type: url-test
     proxies:
       - "all"
-  - url: http://clients1.google.co.jp/generate_204
-    interval: 300
+  - url: http://www.gstatic.com/generate_204
+    interval: 3600
     name: JP
-    type: load-balance
-    strategy: round-robin
+    type: url-test
     proxies:
       - "jp"
   - url: http://www.gstatic.com/generate_204
-    interval: 300
+    interval: 3600
     name: HK
-    type: load-balance
-    strategy: round-robin
+    type: url-test
     proxies:
       - "hk"
 
@@ -71,9 +63,14 @@ rules:
 
   # GeoIP
   - DOMAIN-SUFFIX,jp,JP
+  - DOMAIN-KEYWORD,dmm,JP
+  - GEOIP,JP,JP
   - DOMAIN-KEYWORD,google,HK
   - DOMAIN-KEYWORD,clubhouse,HK
-  - GEOIP,JP,JP
+  - DOMAIN-KEYWORD,oculus,HK
+  - DOMAIN-KEYWORD,facebook,HK
+  - DOMAIN-KEYWORD,hentai,HK
+  - DOMAIN-KEYWORD,binance,HK
   - GEOIP,HK,HK
   - GEOIP,CN,DIRECT
 

@@ -15,5 +15,5 @@
 # vendor/
 
 .idea
-prod.toml
-cmd/sub2clash/sub2clash
+config.toml
+base.yaml

@@ -2,10 +2,11 @@ package clash
 
 import (
 	"errors"
-	"github.com/parnurzeal/gorequest"
 	"net/url"
 	"sub2clash/log"
 	"time"
+
+	"github.com/imroc/req"
 )
 
 const (
@@ -13,7 +14,7 @@ const (
 	timeoutDefault = 10 * time.Second
 )
 
-func Sub2byte(subs []string) (b []byte, err error) {
+func Sub2byte(subs []string, workDir string) (b []byte, err error) {
 	var proxies []interface{}
 	for _, u := range subs {
 		var bodyString string
@@ -39,22 +40,17 @@ func Sub2byte(subs []string) (b []byte, err error) {
 		return nil, errors.New("proxies is empty")
 	}
 
-	return GenerateClashConfig(proxies, tplFile)
+	return GenerateClashConfig(proxies, workDir+tplFile)
 }
-
-var Proxy string
 
 func HttpGet(u string) (string, error) {
 	log.Infof("gorequest get %s", u)
 
-	reqIns := gorequest.New().Get(u).Timeout(timeoutDefault)
-	if Proxy != "" {
-		reqIns = reqIns.Proxy(Proxy)
-	}
-	_, bodyString, errs := reqIns.End()
-	if len(errs) > 0 {
-		return "", errs[0]
+	r, err := req.Get(u)
+
+	if err != nil {
+		return "", err
 	}
 
-	return bodyString, nil
+	return r.ToString()
 }

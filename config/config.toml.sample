@@ -10,6 +10,6 @@ filter = [
   # "韩国",
 ]
 clashApi = "http://localhost:9090"
-port = ":91"
+port = ":8080"
 spec = "@every 1h"
 

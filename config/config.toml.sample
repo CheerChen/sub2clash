@@ -1,3 +1,6 @@
+# subs 订阅地址
+subs = []
+
 # filter 需要的代理关键字，不在这个列表的都过滤
 filter = [
   "新加坡",
@@ -6,10 +9,7 @@ filter = [
   "香港",
   # "韩国",
 ]
+clashApi = "http://localhost:9090"
+port = ":91"
+spec = "@every 1h"
 
-# key 
-key = "your_password"
-port = "8081"
-
-# subs 订阅地址
-subs = []

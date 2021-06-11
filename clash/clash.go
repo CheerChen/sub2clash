@@ -13,7 +13,6 @@ import (
 
 	"gopkg.in/yaml.v2"
 
-	"sub2clash/conf"
 	"sub2clash/log"
 )
 
@@ -26,7 +25,7 @@ type Clash struct {
 	Mode               string `yaml:"mode"`
 	LogLevel           string `yaml:"log-level"`
 	ExternalController string `yaml:"external-controller"`
-	// ExternalUI         string                   `yaml:"external-ui"`
+	ExternalUI         string `yaml:"external-ui"`
 	// Secret             string                   `yaml:"secret"`
 	// Experimental map[string]interface{}   `yaml:"experimental"`
 	Dns        map[string]interface{}   `yaml:"dns"`
@@ -46,20 +45,18 @@ var religionCode = map[string]string{
 	"us": "美国",
 }
 
-func (c *Clash) LoadTemplate(path string, proxies []interface{}) []byte {
+func (c *Clash) LoadTemplate(path string, proxies []interface{}) ([]byte, error) {
 	_, err := os.Stat(path)
 	if err != nil && os.IsNotExist(err) {
-		log.Errorf("[%s] template doesn't exist.", path)
-		return nil
+		return nil, fmt.Errorf("[%s] template doesn't exist", path)
 	}
 	buf, err := ioutil.ReadFile(path)
 	if err != nil {
-		log.Errorf("[%s] template open the failure.", path)
-		return nil
+		return nil, fmt.Errorf("[%s] template open the failure", path)
 	}
 	err = yaml.Unmarshal(buf, &c)
 	if err != nil {
-		log.Errorf("[%s] Template format error.", path)
+		return nil, fmt.Errorf("[%s] Template format error", path)
 	}
 
 	c.Proxy = nil
@@ -120,21 +117,7 @@ func (c *Clash) LoadTemplate(path string, proxies []interface{}) []byte {
 	c.ProxyGroupOld = c.ProxyGroup
 	c.RuleOld = c.Rule
 
-	d, err := yaml.Marshal(c)
-	if err != nil {
-		return nil
-	}
-
-	return d
-}
-
-func GenerateClashConfig(proxies []interface{}, tplFile string) ([]byte, error) {
-	clash := Clash{}
-	r := clash.LoadTemplate(tplFile, proxies)
-	if r == nil {
-		return nil, fmt.Errorf("sublink 返回数据格式不对")
-	}
-	return r, nil
+	return yaml.Marshal(c)
 }
 
 func Base64DecodeStripped(s string) ([]byte, error) {
@@ -150,7 +133,14 @@ func Base64DecodeStripped(s string) ([]byte, error) {
 }
 
 func filterNode(nodeName string) bool {
-	for _, keyword := range conf.Cfg.Filter {
+	blacklist := strings.Split(os.Getenv("SUB_BLACKLIST"), ",")
+	for _, keyword := range blacklist {
+		if strings.Contains(nodeName, keyword) {
+			return true
+		}
+	}
+	whitelist := strings.Split(os.Getenv("SUB_WHITELIST"), ",")
+	for _, keyword := range whitelist {
 		if strings.Contains(nodeName, keyword) {
 			return false
 		}

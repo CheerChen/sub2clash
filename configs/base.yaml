@@ -4,7 +4,6 @@ allow-lan: true
 mode: Rule
 log-level: debug
 external-controller: :9090
-external-ui: /ui
 
 dns:
   enable: true

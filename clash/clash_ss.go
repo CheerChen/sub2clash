@@ -1,6 +1,7 @@
 package clash
 
 import (
+	"bytes"
 	"net/url"
 	"regexp"
 	"strings"
@@ -8,6 +9,7 @@ import (
 )
 
 var ssReg = regexp.MustCompile(`(?m)ss://(\w+)@([^:]+):(\d+)#(.+)`)
+var ssReg2 = regexp.MustCompile(`(?m)ss://(\w+)#(.+)`)
 
 type ClashSS struct {
 	Name       string      `json:"name"`
@@ -31,43 +33,39 @@ func buildSS(s string) ClashSS {
 		log.Errorf("Decode ss config err %s", err)
 		return ClashSS{}
 	}
+	s = strings.Replace(s, "=", "", -1)
 
 	findStr := ssReg.FindStringSubmatch(s)
 	if len(findStr) < 5 {
-		log.Infof("Decode ss config err %s", "findStr<5")
-		return ClashSS{}
+		findStr = ssReg2.FindStringSubmatch(s)
+		if len(findStr) < 3 {
+			log.Errorf("Decode ss config raw %s", s)
+			return ClashSS{}
+		}
 	}
 	rawSSRConfig, err := Base64DecodeStripped(findStr[1])
 	if err != nil {
 		log.Errorf("Decode ss config %s", err)
 		return ClashSS{}
 	}
-	params := strings.Split(string(rawSSRConfig), `:`)
-	if 2 != len(params) {
-		log.Errorf("Decode ss config %s", "params<2")
-		return ClashSS{}
+	if bytes.Contains(rawSSRConfig, []byte("@")) {
+		rawSSRConfig = bytes.Replace(rawSSRConfig, []byte("@"), []byte(":"), 1)
 	}
+	params := strings.Split(string(rawSSRConfig), `:`)
 
 	ss := ClashSS{}
 	ss.Type = "ss"
 	ss.Cipher = params[0]
 	ss.Password = params[1]
-	ss.Server = findStr[2]
-	ss.Port = findStr[3]
-
-	// ss.Plugin = findStr[4]
-	// switch {
-	// case strings.Contains(ss.Plugin, "obfs"):
-	// 	ss.Plugin = "obfs"
-	// }
-
-	// p := PluginOpts{
-	// 	Mode: findStr[5],
-	// }
-	// p.Host = findStr[6]
-
-	ss.Name = findStr[4]
-	// ss.PluginOpts = p
+	if len(findStr) > 3 {
+		ss.Server = findStr[2]
+		ss.Port = findStr[3]
+		ss.Name = findStr[4]
+	} else {
+		ss.Server = params[2]
+		ss.Port = params[3]
+		ss.Name = findStr[2]
+	}
 
 	return ss
 }

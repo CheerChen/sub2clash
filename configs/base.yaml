@@ -27,12 +27,12 @@ proxy-groups:
   - name: SELECT
     type: select
     proxies:
-      - UT
-      - JP
       - HK
+      - JP
+      - UT
       - DIRECT
   - url: http://www.gstatic.com/generate_204
-    interval: 3600
+    interval: 300
     name: UT
     type: url-test
     proxies:
@@ -40,13 +40,15 @@ proxy-groups:
   - url: http://www.gstatic.com/generate_204
     interval: 3600
     name: JP
-    type: url-test
+    type: load-balance
+    strategy: round-robin
     proxies:
       - "jp"
   - url: http://www.gstatic.com/generate_204
     interval: 3600
     name: HK
-    type: url-test
+    type: load-balance
+    strategy: round-robin
     proxies:
       - "hk"
 

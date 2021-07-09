@@ -70,21 +70,24 @@ func Update() {
 		return
 	}
 
+	filename := filepath.Join(workDir, "config.yaml")
 	err = ioutil.WriteFile(filepath.Join(workDir, "config.yaml"), b, 0644)
 	if err != nil {
 		log.Errorf("writing config file failed, %s", err)
 		return
 	}
+	log.Infof("writes data to a file %s", filename)
 	// trigger update
-	url := fmt.Sprintf("http://%s/configs", api)
+	u := fmt.Sprintf("http://%s/configs", api)
 	foo := map[string]interface{}{
 		"path":    "",
 		"payload": string(b),
 	}
 	// req.Debug = true
-	_, err = req.Put(url, req.BodyJSON(&foo))
+	_, err = req.Put(u, req.BodyJSON(&foo))
 	if err != nil {
 		log.Errorf("put config file failed, %s", err)
 		return
 	}
+	log.Infof("req put data %s", u)
 }

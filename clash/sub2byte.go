@@ -35,6 +35,11 @@ func Sub2byte(subs []string, workDir string) (b []byte, err error) {
 		proxies = append(proxies, p...)
 	}
 
+	err = GetProxies()
+	if err != nil {
+		log.Warnf("get proxies err %s", err)
+	}
+
 	if len(proxies) == 0 {
 		return nil, errors.New("proxies is empty")
 	}

@@ -39,12 +39,6 @@ type Clash struct {
 	RuleOld       []string                 `yaml:"Rule"`
 }
 
-var religionCode = map[string]string{
-	"jp": "日本",
-	"hk": "香港",
-	"us": "美国",
-}
-
 func (c *Clash) LoadTemplate(path string, proxies []interface{}) ([]byte, error) {
 	_, err := os.Stat(path)
 	if err != nil && os.IsNotExist(err) {
@@ -104,10 +98,14 @@ func (c *Clash) LoadTemplate(path string, proxies []interface{}) ([]byte, error)
 			case "hk":
 				fallthrough
 			case "us":
-				for _, ps := range proxiesStr {
-					if strings.Contains(ps, religionCode[proxie.(string)]) {
-						tmpGroupProxies = append(tmpGroupProxies, ps)
+				if len(religionList[proxie.(string)]) == 0 {
+					for _, ps := range proxiesStr {
+						if strings.Contains(ps, religionCode[proxie.(string)]) {
+							tmpGroupProxies = append(tmpGroupProxies, ps)
+						}
 					}
+				} else {
+					tmpGroupProxies = religionList[proxie.(string)]
 				}
 			}
 			group["proxies"] = tmpGroupProxies

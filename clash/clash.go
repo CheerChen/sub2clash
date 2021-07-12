@@ -39,12 +39,6 @@ type Clash struct {
 	RuleOld       []string                 `yaml:"Rule"`
 }
 
-var religionCode = map[string]string{
-	"jp": "日本",
-	"hk": "香港",
-	"us": "美国",
-}
-
 func (c *Clash) LoadTemplate(path string, proxies []interface{}) ([]byte, error) {
 	_, err := os.Stat(path)
 	if err != nil && os.IsNotExist(err) {
@@ -104,10 +98,14 @@ func (c *Clash) LoadTemplate(path string, proxies []interface{}) ([]byte, error)
 			case "hk":
 				fallthrough
 			case "us":
-				for _, ps := range proxiesStr {
-					if strings.Contains(ps, religionCode[proxie.(string)]) {
-						tmpGroupProxies = append(tmpGroupProxies, ps)
+				if len(religionList[proxie.(string)]) == 0 {
+					for _, ps := range proxiesStr {
+						if strings.Contains(ps, religionCode[proxie.(string)]) {
+							tmpGroupProxies = append(tmpGroupProxies, ps)
+						}
 					}
+				} else {
+					tmpGroupProxies = religionList[proxie.(string)]
 				}
 			}
 			group["proxies"] = tmpGroupProxies
@@ -132,21 +130,21 @@ func Base64DecodeStripped(s string) ([]byte, error) {
 	return decoded, err
 }
 
-func filterNode(nodeName string) bool {
+func IsValidNode(nodeName string) bool {
 	blacklist := strings.Split(os.Getenv("SUB_BLACKLIST"), ",")
 	for _, keyword := range blacklist {
 		if strings.Contains(nodeName, keyword) {
-			return true
+			return false
 		}
 	}
 	whitelist := strings.Split(os.Getenv("SUB_WHITELIST"), ",")
 	for _, keyword := range whitelist {
 		if strings.Contains(nodeName, keyword) {
-			return false
+			return true
 		}
 	}
 
-	return true
+	return false
 }
 
 func ParseContent(content string) []interface{} {
@@ -163,21 +161,21 @@ func ParseContent(content string) []interface{} {
 		case strings.HasPrefix(scanner.Text(), "ss://"):
 			s := strings.TrimSpace(scanner.Text())
 			ss := buildSS(s)
-			if ss.Name != "" && !filterNode(ss.Name) {
+			if ss.Name != "" && IsValidNode(ss.Name) {
 				proxies = append(proxies, ss)
 			}
 		case strings.HasPrefix(scanner.Text(), "ssr://"):
 			s := scanner.Text()[6:]
 			s = strings.TrimSpace(s)
 			ssr := buildSSR(s)
-			if ssr.Name != "" && !filterNode(ssr.Name) {
+			if ssr.Name != "" && IsValidNode(ssr.Name) {
 				proxies = append(proxies, ssr)
 			}
 		case strings.HasPrefix(scanner.Text(), "vmess://"):
 			s := scanner.Text()[8:]
 			s = strings.TrimSpace(s)
 			vmess := buildVMess(s)
-			if vmess.Name != "" && !filterNode(vmess.Name) {
+			if vmess.Name != "" && IsValidNode(vmess.Name) {
 				proxies = append(proxies, vmess)
 			}
 		}

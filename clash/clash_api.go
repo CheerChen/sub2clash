@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-var religionList map[string][]string
+var regionList map[string][]string
 
 //var avgDelay int64
 
@@ -27,7 +27,7 @@ type ProxiesResp struct {
 	Proxies map[string]Delay `json:"proxies"`
 }
 
-var religionCode = map[string]string{
+var regionCode = map[string]string{
 	"jp": "日本",
 	"hk": "香港",
 	"us": "美国",
@@ -65,15 +65,28 @@ func GetProxies() error {
 
 	sort.Sort(proxyDelayList)
 
-	religionList = make(map[string][]string)
+	regionList = make(map[string][]string)
 	for _, proxyDelay := range proxyDelayList {
-		for code, religion := range religionCode {
-			if len(religionList[code]) < 10 && strings.Contains(proxyDelay.Name, religion) {
-				religionList[code] = append(religionList[code], proxyDelay.Name)
+		for code, region := range regionCode {
+			if len(regionList[code]) < 10 && InRegion(proxyDelay.Name, code, region) {
+				regionList[code] = append(regionList[code], proxyDelay.Name)
 			}
 		}
 	}
 	return nil
+}
+
+func InRegion(name, code, region string) bool {
+	if strings.Contains(name, region) {
+		return true
+	}
+	if strings.Contains(name, code) {
+		return true
+	}
+	if strings.Contains(name, strings.ToUpper(code)) {
+		return true
+	}
+	return false
 }
 
 type ProxyDelay struct {

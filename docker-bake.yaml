@@ -1,0 +1,8 @@
+#  docker buildx bake -f docker-bake.yaml --push
+version: "3.4"
+services:
+  sub2clash:
+    build:
+      dockerfile: Dockerfile
+    image: cheerchen37/sub2clash
+

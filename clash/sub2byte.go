@@ -5,6 +5,7 @@ import (
 	"github.com/imroc/req"
 	"net/url"
 	"path/filepath"
+	"strings"
 	"sub2clash/log"
 )
 
@@ -15,7 +16,7 @@ func Sub2byte(subs []string, workDir string) (b []byte, err error) {
 	var proxies []interface{}
 	for _, u := range subs {
 		var bodyString string
-		if _, err = url.Parse(u); err != nil {
+		if _, err = url.Parse(strings.TrimSpace(u)); err != nil {
 			log.Errorf("parse err in url %s, %s", u, err)
 			continue
 		}

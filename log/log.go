@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	level  = DEBUG
+	level = DEBUG
 )
 
 func init() {

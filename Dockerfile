@@ -1,4 +1,4 @@
-FROM golang:alpine as builder
+FROM --platform=linux/arm64 golang:alpine as builder
 
 RUN apk add --no-cache make git
 

@@ -6,8 +6,8 @@ import (
 )
 
 var (
-	// LogLevelMapping is a mapping for LogLevel enum
-	LogLevelMapping = map[string]LogLevel{
+	// LevelMapping is a mapping for LogLevel enum
+	LevelMapping = map[string]LogLevel{
 		ERROR.String():   ERROR,
 		WARNING.String(): WARNING,
 		INFO.String():    INFO,
@@ -30,7 +30,7 @@ type LogLevel int
 func (l *LogLevel) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	var tp string
 	unmarshal(&tp)
-	level, exist := LogLevelMapping[tp]
+	level, exist := LevelMapping[tp]
 	if !exist {
 		return errors.New("invalid mode")
 	}
@@ -42,7 +42,7 @@ func (l *LogLevel) UnmarshalYAML(unmarshal func(interface{}) error) error {
 func (l *LogLevel) UnmarshalJSON(data []byte) error {
 	var tp string
 	json.Unmarshal(data, &tp)
-	level, exist := LogLevelMapping[tp]
+	level, exist := LevelMapping[tp]
 	if !exist {
 		return errors.New("invalid mode")
 	}

@@ -20,7 +20,7 @@ func TestGetDelayMap(t *testing.T) {
 			if err := GetProxies(); (err != nil) != tt.wantErr {
 				t.Errorf("GetProxies() error = %v, wantErr %v", err, tt.wantErr)
 			}
-			fmt.Println(religionList)
+			fmt.Println(regionList)
 		})
 	}
 }

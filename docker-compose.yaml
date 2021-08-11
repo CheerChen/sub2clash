@@ -1,0 +1,37 @@
+version: "2"
+services:
+  clash:
+    image: dreamacro/clash
+    restart: always
+    volumes:
+      - ~/Public/clash:/root/.config/clash
+    container_name: clash-core
+    ports:
+      - 7890:7890
+      - 7891:7891
+      - 9090:9090
+  yacd:
+    image: haishanh/yacd
+    restart: always
+    depends_on:
+      - clash
+    ports:
+      - 7892:80
+    container_name: clash-dashboard
+  sub2clash:
+    image: cheerchen37/sub2clash
+    restart: always
+    volumes:
+      - ~/Public/clash:/configs
+    depends_on:
+      - clash
+    ports:
+      - 7893:80
+    environment:
+      CLASH_CONTROLLER: "clash:9090"
+      SUB_WHITELIST: "新加坡,日本,香港,HK,JP,SG"
+      SUB_BLACKLIST: "仅海外,回国,V1,游戏,广州,小麦"
+      SUB_URLS: ""
+      CRON: "*/30 * * * *"
+    container_name: clash-subscribe
+

@@ -98,14 +98,14 @@ func (c *Clash) LoadTemplate(path string, proxies []interface{}) ([]byte, error)
 			case "hk":
 				fallthrough
 			case "us":
-				if len(religionList[proxie.(string)]) == 0 {
+				if len(regionList[proxie.(string)]) == 0 {
 					for _, ps := range proxiesStr {
-						if strings.Contains(ps, religionCode[proxie.(string)]) {
+						if strings.Contains(ps, regionCode[proxie.(string)]) {
 							tmpGroupProxies = append(tmpGroupProxies, ps)
 						}
 					}
 				} else {
-					tmpGroupProxies = religionList[proxie.(string)]
+					tmpGroupProxies = regionList[proxie.(string)]
 				}
 			}
 			group["proxies"] = tmpGroupProxies

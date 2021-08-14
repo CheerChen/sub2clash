@@ -2,11 +2,12 @@ package clash
 
 import (
 	"errors"
-	"github.com/imroc/req"
 	"net/url"
 	"path/filepath"
 	"strings"
 	"sub2clash/log"
+
+	"github.com/imroc/req"
 )
 
 func Sub2byte(subs []string, workDir string) (b []byte, err error) {
@@ -38,6 +39,7 @@ func Sub2byte(subs []string, workDir string) (b []byte, err error) {
 
 	err = GetProxies()
 	if err != nil {
+		regionList = make(map[string][]string)
 		log.Warnf("get proxies err %s", err)
 	}
 

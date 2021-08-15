@@ -38,7 +38,7 @@ func buildSSR(s string) ClashSSR {
 	}
 	//log.Infof(string(rawSSRConfig))
 	params := strings.Split(string(rawSSRConfig), `:`)
-	if 6 != len(params) {
+	if len(params) != 6 {
 		return ClashSSR{}
 	}
 	ssr := ClashSSR{}
@@ -50,8 +50,7 @@ func buildSSR(s string) ClashSSR {
 	ssr.OBFS = params[SSROBFS]
 
 	// 如果兼容ss协议，就转换为clash的ss配置
-	// https://github.com/Dreamacro/clash
-	if "origin" == ssr.Protocol && "plain" == ssr.OBFS {
+	if ssr.Protocol == "origin" && ssr.OBFS == "plain" {
 		switch ssr.Cipher {
 		case "aes-128-gcm", "aes-192-gcm", "aes-256-gcm",
 			"aes-128-cfb", "aes-192-cfb", "aes-256-cfb",
@@ -62,7 +61,7 @@ func buildSSR(s string) ClashSSR {
 		}
 	}
 	suffix := strings.Split(params[SSRSuffix], "/?")
-	if 2 != len(suffix) {
+	if len(suffix) != 2 {
 		return ClashSSR{}
 	}
 	passwordBase64 := suffix[0]

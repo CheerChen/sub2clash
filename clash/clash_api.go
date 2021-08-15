@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"reflect"
 	"sort"
 	"strings"
 )
@@ -33,9 +34,9 @@ var regionCode = map[string]string{
 	"us": "美国",
 }
 
-// GetProxies
+// GetProxiesWithDelay
 // request proxies and make delay map
-func GetProxies() error {
+func GetProxiesWithDelay(proxies []interface{}) error {
 	var proxyDelayList ProxyDelayList
 
 	api := os.Getenv("CLASH_CONTROLLER")
@@ -51,16 +52,22 @@ func GetProxies() error {
 	}
 
 	for name, delay := range resp.Proxies {
-		proxyDelay := ProxyDelay{
-			Name:  name,
-			Delay: math.MaxInt64,
-		}
-		for _, history := range delay.History {
-			if history.Delay > 0 {
-				proxyDelay.Delay = history.Delay
+		for _, proto := range proxies {
+			protoName := reflect.ValueOf(proto).FieldByName("Name").String()
+			if name == protoName {
+				proxyDelay := ProxyDelay{
+					Name:  name,
+					Delay: math.MaxInt64,
+				}
+				for _, history := range delay.History {
+					if history.Delay > 0 {
+						proxyDelay.Delay = history.Delay
+					}
+				}
+				proxyDelayList = append(proxyDelayList, proxyDelay)
+				break
 			}
 		}
-		proxyDelayList = append(proxyDelayList, proxyDelay)
 	}
 
 	sort.Sort(proxyDelayList)

@@ -34,23 +34,24 @@ type Clash struct {
 	Rule       []string                 `yaml:"rules"`
 
 	// 兼容
-	ProxyOld      []map[string]interface{} `yaml:"Proxy"`
-	ProxyGroupOld []map[string]interface{} `yaml:"Proxy Group"`
-	RuleOld       []string                 `yaml:"Rule"`
+	// ProxyOld      []map[string]interface{} `yaml:"Proxy"`
+	// ProxyGroupOld []map[string]interface{} `yaml:"Proxy Group"`
+	// RuleOld       []string                 `yaml:"Rule"`
 }
 
-func (c *Clash) LoadTemplate(path string, proxies []interface{}) ([]byte, error) {
-	_, err := os.Stat(path)
+func (c *Clash) LoadTemplate(proxies []interface{}) ([]byte, error) {
+	tplFile := "/configs/base.yaml"
+	_, err := os.Stat(tplFile)
 	if err != nil && os.IsNotExist(err) {
-		return nil, fmt.Errorf("[%s] template doesn't exist", path)
+		return nil, fmt.Errorf("[%s] template doesn't exist", tplFile)
 	}
-	buf, err := ioutil.ReadFile(path)
+	buf, err := ioutil.ReadFile(tplFile)
 	if err != nil {
-		return nil, fmt.Errorf("[%s] template open the failure", path)
+		return nil, fmt.Errorf("[%s] template open the failure", tplFile)
 	}
 	err = yaml.Unmarshal(buf, &c)
 	if err != nil {
-		return nil, fmt.Errorf("[%s] Template format error", path)
+		return nil, fmt.Errorf("[%s] Template format error", tplFile)
 	}
 
 	c.Proxy = nil
@@ -111,9 +112,9 @@ func (c *Clash) LoadTemplate(path string, proxies []interface{}) ([]byte, error)
 			group["proxies"] = tmpGroupProxies
 		}
 	}
-	c.ProxyOld = c.Proxy
-	c.ProxyGroupOld = c.ProxyGroup
-	c.RuleOld = c.Rule
+	// c.ProxyOld = c.Proxy
+	// c.ProxyGroupOld = c.ProxyGroup
+	// c.RuleOld = c.Rule
 
 	return yaml.Marshal(c)
 }
@@ -159,7 +160,8 @@ func ParseContent(content string) []interface{} {
 	for scanner.Scan() {
 		switch {
 		case strings.HasPrefix(scanner.Text(), "ss://"):
-			s := strings.TrimSpace(scanner.Text())
+			s := scanner.Text()
+			s = strings.TrimSpace(s)
 			ss := buildSS(s)
 			if ss.Name != "" && IsValidNode(ss.Name) {
 				proxies = append(proxies, ss)

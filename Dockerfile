@@ -14,5 +14,5 @@ LABEL org.opencontainers.image.source="https://github.com/CheerChen/sub2clash"
 
 COPY --from=builder /sub2clash /
 
-ENTRYPOINT ["/sub2clash", "-d", "/configs"]
+ENTRYPOINT ["/sub2clash"]
 EXPOSE 80

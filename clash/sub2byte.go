@@ -3,17 +3,13 @@ package clash
 import (
 	"errors"
 	"net/url"
-	"path/filepath"
 	"strings"
 	"sub2clash/log"
 
 	"github.com/imroc/req"
 )
 
-func Sub2byte(subs []string, workDir string) (b []byte, err error) {
-	clash := &Clash{}
-	tplFile := filepath.Join(workDir, "base.yaml")
-
+func Sub2byte(subs []string) (b []byte, err error) {
 	var proxies []interface{}
 	for _, u := range subs {
 		var bodyString string
@@ -36,18 +32,18 @@ func Sub2byte(subs []string, workDir string) (b []byte, err error) {
 
 		proxies = append(proxies, p...)
 	}
+	if len(proxies) == 0 {
+		return nil, errors.New("proxies is empty")
+	}
 
-	err = GetProxies()
+	err = GetProxiesWithDelay(proxies)
 	if err != nil {
 		regionList = make(map[string][]string)
 		log.Warnf("get proxies err %s", err)
 	}
 
-	if len(proxies) == 0 {
-		return nil, errors.New("proxies is empty")
-	}
-
-	return clash.LoadTemplate(tplFile, proxies)
+	clash := &Clash{}
+	return clash.LoadTemplate(proxies)
 }
 
 func HttpGet(u string) (string, error) {

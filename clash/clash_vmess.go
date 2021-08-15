@@ -69,7 +69,7 @@ func buildVMess(s string) ClashVmess {
 	} else {
 		clashVmess.TLS = false
 	}
-	if "ws" == vmess.Net {
+	if vmess.Net == "ws" {
 		clashVmess.Network = vmess.Net
 		clashVmess.WSPATH = vmess.Path
 	}

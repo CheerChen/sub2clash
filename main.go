@@ -1,12 +1,10 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/NYTimes/gziphandler"
@@ -20,13 +18,8 @@ import (
 )
 
 var (
-	workDir, spec, subs, api string
+	spec, subs, api string
 )
-
-func init() {
-	flag.StringVar(&workDir, "d", ".", "specify directory")
-	flag.Parse()
-}
 
 func main() {
 	spec = os.Getenv("CRON")
@@ -43,12 +36,7 @@ func main() {
 
 	router := httprouter.New()
 	router.GET("/sub", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-		b, err := ioutil.ReadFile(filepath.Join(workDir, "config.yaml"))
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusServiceUnavailable)
-			return
-		}
-		_, _ = w.Write(b)
+		http.ServeFile(w, r, "/configs/config.yaml")
 	})
 
 	n := negroni.New(negroni.NewRecovery(), negroni.NewLogger())
@@ -64,14 +52,14 @@ func Update() {
 		return
 	}
 
-	b, err := clash.Sub2byte(urls, workDir)
+	b, err := clash.Sub2byte(urls)
 	if err != nil {
 		log.Errorf("Sub2byte failed, %s", err)
 		return
 	}
 
-	filename := filepath.Join(workDir, "config.yaml")
-	err = ioutil.WriteFile(filepath.Join(workDir, "config.yaml"), b, 0644)
+	filename := "/configs/config.yaml"
+	err = ioutil.WriteFile(filename, b, 0644)
 	if err != nil {
 		log.Errorf("writing config file failed, %s", err)
 		return
@@ -83,7 +71,7 @@ func Update() {
 		"path":    "",
 		"payload": string(b),
 	}
-	// req.Debug = true
+	req.Debug = true
 	_, err = req.Put(u, req.BodyJSON(&foo))
 	if err != nil {
 		log.Errorf("put config file failed, %s", err)

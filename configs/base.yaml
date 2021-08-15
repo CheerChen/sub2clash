@@ -77,8 +77,3 @@ rules:
 
   # 自定义
   - MATCH,SELECT
-
-# 兼容
-Proxy: ~
-ProxyGroup: ~
-Rule: ~

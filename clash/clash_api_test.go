@@ -17,8 +17,8 @@ func TestGetDelayMap(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := GetProxies(); (err != nil) != tt.wantErr {
-				t.Errorf("GetProxies() error = %v, wantErr %v", err, tt.wantErr)
+			if err := GetProxiesWithDelay(); (err != nil) != tt.wantErr {
+				t.Errorf("GetProxiesWithDelay() error = %v, wantErr %v", err, tt.wantErr)
 			}
 			fmt.Println(regionList)
 		})

@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"sort"
 	"strings"
+	"sub2clash/log"
 )
 
 var regionList map[string][]string
@@ -76,6 +77,7 @@ func GetProxiesWithDelay(proxies []interface{}) error {
 	for _, proxyDelay := range proxyDelayList {
 		for code, region := range regionCode {
 			if len(regionList[code]) < 10 && InRegion(proxyDelay.Name, code, region) {
+				log.Infof("add region group %s, %s, %d", code, proxyDelay.Name, proxyDelay.Delay)
 				regionList[code] = append(regionList[code], proxyDelay.Name)
 			}
 		}

@@ -71,7 +71,7 @@ func Update() {
 		"path":    "",
 		"payload": string(b),
 	}
-	req.Debug = true
+	//req.Debug = true
 	_, err = req.Put(u, req.BodyJSON(&foo))
 	if err != nil {
 		log.Errorf("put config file failed, %s", err)

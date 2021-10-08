@@ -63,16 +63,23 @@ func buildVMess(s string) ClashVmess {
 	}
 	clashVmess.UUID = vmess.ID
 	clashVmess.AlterID = vmess.Aid
-	clashVmess.Cipher = vmess.Type
+	clashVmess.Cipher = "auto"
 	if strings.EqualFold(vmess.TLS, "tls") {
 		clashVmess.TLS = true
 	} else {
 		clashVmess.TLS = false
 	}
+	clashVmess.Network = vmess.Net
 	if vmess.Net == "ws" {
-		clashVmess.Network = vmess.Net
 		clashVmess.WSPATH = vmess.Path
 	}
+	wsHeaders := make(map[string]string)
+	if vmess.Host != "" {
+		wsHeaders["Host"] = vmess.Host
+	} else {
+		wsHeaders["Host"] = vmess.Add
+	}
+	clashVmess.WSHeaders = wsHeaders
 
 	return clashVmess
 }

@@ -7,4 +7,4 @@
 1. convert subscription(ss/ssr/vmess) to clash config
 2. automatically update config file and send to clash controller api
 
-Check the [Clash Compose](https://github.com/CheerChen/clash-compose)
+Check [Clash Compose](https://github.com/CheerChen/sub2clash/blob/main/docker-compose.yaml)

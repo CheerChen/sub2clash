@@ -31,7 +31,7 @@ func TestHttpGet(t *testing.T) {
 			continue
 		}
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := HttpGet(tt.args.u)
+			got, err := HttpGet(tt.args.u, false)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("HttpGet() error = %v, wantErr %v", err, tt.wantErr)
 				return

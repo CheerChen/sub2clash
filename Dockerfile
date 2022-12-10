@@ -1,12 +1,12 @@
-FROM --platform=linux/arm64 golang:alpine as builder
+FROM golang:alpine as builder
 
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
 RUN apk add --no-cache make git
 
 WORKDIR /sub2clash-src
 COPY . /sub2clash-src
-RUN export GOPROXY=https://goproxy.io,direct && \
-    go mod download && \
-    make docker && \
+
+RUN make docker && \
     mv ./bin/sub2clash /sub2clash
 
 FROM alpine:latest

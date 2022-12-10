@@ -1,6 +1,6 @@
 GOBUILD=CGO_ENABLED=0 go build -trimpath -ldflags '-w -s'  -o
-BIN=bin/sub2clash
-SOURCE=.
 
 docker:
-	$(GOBUILD) $(BIN) $(SOURCE)
+	go env -w GOPROXY="https://goproxy.cn,direct" && go env -w GOSUMDB=sum.golang.google.cn
+	go mod tidy
+	$(GOBUILD) bin/sub2clash .

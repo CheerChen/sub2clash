@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"sort"
 	"strings"
+	"sub2clash/log"
 )
 
 var regionList map[string][]string
@@ -32,6 +33,9 @@ var regionCode = map[string]string{
 	"jp": "日本",
 	"hk": "香港",
 	"us": "美国",
+	"sg": "新加坡",
+	"tw": "台湾",
+	"kr": "韩国",
 }
 
 // GetProxiesWithDelay
@@ -41,7 +45,7 @@ func GetProxiesWithDelay(proxies []interface{}) error {
 
 	api := os.Getenv("CLASH_CONTROLLER")
 	u := fmt.Sprintf("http://%s/proxies", api)
-	bodyString, err := HttpGet(u)
+	bodyString, err := HttpGet(u, false)
 	if err != nil {
 		return err
 	}
@@ -76,6 +80,7 @@ func GetProxiesWithDelay(proxies []interface{}) error {
 	for _, proxyDelay := range proxyDelayList {
 		for code, region := range regionCode {
 			if len(regionList[code]) < 10 && InRegion(proxyDelay.Name, code, region) {
+				log.Infof("add region group %s, %s, %d", code, proxyDelay.Name, proxyDelay.Delay)
 				regionList[code] = append(regionList[code], proxyDelay.Name)
 			}
 		}

@@ -3,77 +3,88 @@ socks-port: 7891
 allow-lan: true
 mode: Rule
 log-level: debug
-external-controller: :9090
-
+external-controller: ':9090'
 dns:
   enable: true
-  enhanced-mode: redir-host
+  listen: '0.0.0.0:53'
   ipv6: false
-  nameserver:
+  default-nameserver:
     - 119.29.29.29
-    - 45.90.28.57
     - 223.5.5.5
+  nameserver:
+    - 'https://doh.pub/dns-query'
+    - 'https://dns.alidns.com/dns-query'
   fallback:
-    - 114.114.114.114
-    - tls://8.8.8.8:853
+    - 1.1.1.1 # cloudflare DNS UDP
+    - 8.8.8.8 # Google DNS UDP
   fallback-filter:
     geoip: true
+    geoip-code: CN
     ipcidr:
       - 240.0.0.0/4
 
-proxies: ~
+proxies: null
 
 proxy-groups:
   - name: SELECT
     type: select
     proxies:
-      - HK
-      - JP
       - UT
+      - JP
+      - HK
+      - US
       - DIRECT
-  - url: http://www.gstatic.com/generate_204
-    interval: 300
+  - url: 'https://www.gstatic.com/generate_204'
+    interval: 1800
     name: UT
     type: url-test
     proxies:
-      - "all"
-  - url: http://www.gstatic.com/generate_204
-    interval: 3600
+      - all
+  - url: 'https://www.gstatic.com/generate_204'
+    interval: 1800
     name: JP
-    type: load-balance
-    strategy: round-robin
+    type: url-test
     proxies:
-      - "jp"
-  - url: http://www.gstatic.com/generate_204
-    interval: 3600
+      - jp
+  - url: 'https://www.gstatic.com/generate_204'
+    interval: 1800
     name: HK
-    type: load-balance
-    strategy: round-robin
+    type: url-test
     proxies:
-      - "hk"
+      - hk
+  - url: 'https://www.gstatic.com/generate_204'
+    interval: 1800
+    name: US
+    type: url-test
+    proxies:
+      - us
 
 rules:
-  # Local Area Network
-  - DOMAIN-SUFFIX,local,DIRECT
-  - IP-CIDR,127.0.0.0/8,DIRECT
-  - IP-CIDR,172.16.0.0/12,DIRECT
-  - IP-CIDR,192.168.0.0/16,DIRECT
-  - IP-CIDR,10.0.0.0/8,DIRECT
-  - IP-CIDR,17.0.0.0/8,DIRECT
-  - IP-CIDR,100.64.0.0/10,DIRECT
+  - 'DOMAIN-SUFFIX,local,DIRECT'
+  - 'IP-CIDR,192.168.0.0/16,DIRECT'
+  - 'IP-CIDR,127.0.0.0/8,DIRECT'
+  - 'IP-CIDR,172.16.0.0/12,DIRECT'
+  - 'IP-CIDR,10.0.0.0/8,DIRECT'
+  - 'IP-CIDR,17.0.0.0/8,DIRECT'
+  - 'IP-CIDR,100.64.0.0/10,DIRECT'
+  - 'DOMAIN-SUFFIX,jp,JP'
+  - 'DOMAIN-KEYWORD,dmm,JP'
+  - 'DOMAIN-KEYWORD,binance,JP'
+  - 'GEOIP,JP,JP'
+  - 'DOMAIN-KEYWORD,google,HK'
+  - 'DOMAIN-KEYWORD,oculus,HK'
+  - 'DOMAIN-KEYWORD,facebook,HK'
+  - 'DOMAIN-KEYWORD,hentai,HK'
+  - 'DOMAIN-KEYWORD,konachan,HK'
+  - 'GEOIP,HK,HK'
+  - 'DOMAIN-KEYWORD,musicbrainz,HK'
+  - 'DOMAIN-KEYWORD,openai,JP'
+  - 'DOMAIN-KEYWORD,twitter,JP'
+  - 'DOMAIN-KEYWORD,twimg,JP'
+  - 'GEOIP,US,HK'
+  - 'GEOIP,CN,DIRECT'
+  - 'MATCH,SELECT'
 
-  # GeoIP
-  - DOMAIN-SUFFIX,jp,JP
-  - DOMAIN-KEYWORD,dmm,JP
-  - GEOIP,JP,JP
-  - DOMAIN-KEYWORD,google,HK
-  - DOMAIN-KEYWORD,clubhouse,HK
-  - DOMAIN-KEYWORD,oculus,HK
-  - DOMAIN-KEYWORD,facebook,HK
-  - DOMAIN-KEYWORD,hentai,HK
-  - DOMAIN-KEYWORD,binance,HK
-  - GEOIP,HK,HK
-  - GEOIP,CN,DIRECT
-
-  # 自定义
-  - MATCH,SELECT
+Proxy: null
+ProxyGroup: null
+Rule: null

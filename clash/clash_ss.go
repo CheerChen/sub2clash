@@ -20,6 +20,7 @@ type ClashSS struct {
 	Cipher     string      `json:"cipher"`
 	Plugin     string      `json:"plugin"`
 	PluginOpts PluginOpts  `json:"plugin-opts"`
+	UDP        bool        `json:"udp"`
 }
 
 type PluginOpts struct {
@@ -55,6 +56,7 @@ func buildSS(s string) ClashSS {
 
 	ss := ClashSS{}
 	ss.Type = "ss"
+	ss.UDP = true
 	ss.Cipher = params[0]
 	ss.Password = params[1]
 	if len(findStr) > 3 {

@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/NYTimes/gziphandler"
-	"github.com/imroc/req"
+	req "github.com/imroc/req/v3"
 	"github.com/julienschmidt/httprouter"
 	"github.com/robfig/cron/v3"
 	"github.com/urfave/negroni"
@@ -71,8 +71,7 @@ func Update() {
 		"path":    "",
 		"payload": string(b),
 	}
-	req.Debug = true
-	_, err = req.Put(u, req.BodyJSON(&foo))
+	_, err = req.C().DevMode().R().SetBody(&foo).Put(u)
 	if err != nil {
 		log.Errorf("put config file failed, %s", err)
 		return

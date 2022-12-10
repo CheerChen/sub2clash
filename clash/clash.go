@@ -17,21 +17,18 @@ import (
 )
 
 type Clash struct {
-	Port      int `yaml:"port"`
-	SocksPort int `yaml:"socks-port"`
-	// RedirPort          int                      `yaml:"redir-port"`
-	// Authentication     []string                 `yaml:"authentication"`
-	AllowLan           bool   `yaml:"allow-lan"`
-	Mode               string `yaml:"mode"`
-	LogLevel           string `yaml:"log-level"`
-	ExternalController string `yaml:"external-controller"`
-	ExternalUI         string `yaml:"external-ui"`
-	// Secret             string                   `yaml:"secret"`
-	// Experimental map[string]interface{}   `yaml:"experimental"`
-	Dns        map[string]interface{}   `yaml:"dns"`
-	Proxy      []map[string]interface{} `yaml:"proxies"`
-	ProxyGroup []map[string]interface{} `yaml:"proxy-groups"`
-	Rule       []string                 `yaml:"rules"`
+	Port               int                      `yaml:"port"`
+	SocksPort          int                      `yaml:"socks-port"`
+	AllowLan           bool                     `yaml:"allow-lan"`
+	Mode               string                   `yaml:"mode"`
+	LogLevel           string                   `yaml:"log-level"`
+	ExternalController string                   `yaml:"external-controller"`
+	ExternalUI         string                   `yaml:"external-ui"`
+	Profile            map[string]interface{}   `yaml:"profile"`
+	Dns                map[string]interface{}   `yaml:"dns"`
+	Proxy              []map[string]interface{} `yaml:"proxies"`
+	ProxyGroup         []map[string]interface{} `yaml:"proxy-groups"`
+	Rule               []string                 `yaml:"rules"`
 
 	// 兼容
 	// ProxyOld      []map[string]interface{} `yaml:"Proxy"`

@@ -7,16 +7,16 @@ services:
       - ~/Public/clash:/root/.config/clash
     container_name: clash-core
     ports:
-      - 7890:7890
-      - 7891:7891
-      - 9090:9090
+      - "7890:7890"
+      - "7891:7891"
+      - "9090:9090"
   yacd:
     image: haishanh/yacd
     restart: always
     depends_on:
       - clash
     ports:
-      - 7892:80
+      - "7892:80"
     container_name: clash-dashboard
   sub2clash:
     image: cheerchen37/sub2clash
@@ -26,7 +26,7 @@ services:
     depends_on:
       - clash
     ports:
-      - 7893:80
+      - "7893:80"
     environment:
       CLASH_CONTROLLER: "clash:9090"
       SUB_WHITELIST: "香港,日本,美国,HK,JP,US"

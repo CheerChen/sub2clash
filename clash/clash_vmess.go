@@ -33,6 +33,7 @@ type ClashVmess struct {
 	WSPATH         string            `json:"ws-path,omitempty"`
 	WSHeaders      map[string]string `json:"ws-headers,omitempty"`
 	SkipCertVerify bool              `json:"skip-cert-verify,omitempty"`
+	UDP            bool              `json:"udp,omitempty"`
 }
 
 func buildVMess(s string) ClashVmess {
@@ -56,6 +57,8 @@ func buildVMess(s string) ClashVmess {
 		clashVmess.Port, _ = vmess.Port.(string)
 	case int:
 		clashVmess.Port, _ = vmess.Port.(int)
+	case int64:
+		clashVmess.Port, _ = vmess.Port.(int64)
 	case float64:
 		clashVmess.Port, _ = vmess.Port.(float64)
 	default:
@@ -64,6 +67,8 @@ func buildVMess(s string) ClashVmess {
 	clashVmess.UUID = vmess.ID
 	clashVmess.AlterID = vmess.Aid
 	clashVmess.Cipher = "auto"
+	clashVmess.UDP = true
+
 	if strings.EqualFold(vmess.TLS, "tls") {
 		clashVmess.TLS = true
 	} else {
@@ -72,14 +77,14 @@ func buildVMess(s string) ClashVmess {
 	clashVmess.Network = vmess.Net
 	if vmess.Net == "ws" {
 		clashVmess.WSPATH = vmess.Path
+		wsHeaders := make(map[string]string)
+		if vmess.Host != "" {
+			wsHeaders["Host"] = vmess.Host
+		} else {
+			wsHeaders["Host"] = vmess.Add
+		}
+		clashVmess.WSHeaders = wsHeaders
 	}
-	wsHeaders := make(map[string]string)
-	if vmess.Host != "" {
-		wsHeaders["Host"] = vmess.Host
-	} else {
-		wsHeaders["Host"] = vmess.Add
-	}
-	clashVmess.WSHeaders = wsHeaders
 
 	return clashVmess
 }

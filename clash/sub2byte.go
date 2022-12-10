@@ -2,11 +2,13 @@ package clash
 
 import (
 	"errors"
+	"fmt"
 	"net/url"
+	"os"
 	"strings"
 	"sub2clash/log"
 
-	"github.com/imroc/req"
+	req "github.com/imroc/req/v3"
 )
 
 func Sub2byte(subs []string) (b []byte, err error) {
@@ -17,7 +19,7 @@ func Sub2byte(subs []string) (b []byte, err error) {
 			log.Errorf("parse err in url %s, %s", u, err)
 			continue
 		}
-		bodyString, err = HttpGet(u)
+		bodyString, err = HttpGet(u, true)
 		if err != nil {
 			log.Errorf("get sub url err, %s", err)
 			continue
@@ -46,10 +48,19 @@ func Sub2byte(subs []string) (b []byte, err error) {
 	return clash.LoadTemplate(proxies)
 }
 
-func HttpGet(u string) (string, error) {
-	log.Infof("req get %s", u)
+func HttpGet(u string, useProxy bool) (string, error) {
 
-	r, err := req.Get(u)
+	log.Infof("req get %s", u)
+	client := req.C().DevMode()
+
+	if useProxy {
+		api := os.Getenv("CLASH_CONTROLLER")
+		api = strings.ReplaceAll(api, "9090", "7891")
+		proxyUrl := fmt.Sprintf("socks5://%s", api)
+		client.SetProxyURL(proxyUrl)
+		log.Infof("SetProxyUrl %s", proxyUrl)
+	}
+	r, err := client.R().Get(u)
 
 	if err != nil {
 		return "", err

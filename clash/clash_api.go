@@ -33,6 +33,9 @@ var regionCode = map[string]string{
 	"jp": "日本",
 	"hk": "香港",
 	"us": "美国",
+	"sg": "新加坡",
+	"tw": "台湾",
+	"kr": "韩国",
 }
 
 // GetProxiesWithDelay
@@ -42,7 +45,7 @@ func GetProxiesWithDelay(proxies []interface{}) error {
 
 	api := os.Getenv("CLASH_CONTROLLER")
 	u := fmt.Sprintf("http://%s/proxies", api)
-	bodyString, err := HttpGet(u)
+	bodyString, err := HttpGet(u, false)
 	if err != nil {
 		return err
 	}

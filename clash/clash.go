@@ -95,6 +95,8 @@ func (c *Clash) LoadTemplate(proxies []interface{}) ([]byte, error) {
 				fallthrough
 			case "hk":
 				fallthrough
+			case "sg":
+				fallthrough
 			case "us":
 				if len(regionList[proxie.(string)]) == 0 {
 					for _, ps := range proxiesStr {

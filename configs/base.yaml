@@ -15,8 +15,10 @@ dns:
     - 'https://doh.pub/dns-query'
     - 'https://dns.alidns.com/dns-query'
   fallback:
-    - 1.1.1.1 # cloudflare DNS UDP
-    - 8.8.8.8 # Google DNS UDP
+    - 'https://1.1.1.1/dns-query'
+    - 'https://8.8.8.8/dns-query'
+    - 'https://dns.adguard.com/dns-query'
+    - 'https://dns.quad9.net/dns-query'
   fallback-filter:
     geoip: true
     geoip-code: CN
@@ -48,6 +50,12 @@ proxy-groups:
       - jp
   - url: 'https://www.gstatic.com/generate_204'
     interval: 1800
+    name: SG
+    type: url-test
+    proxies:
+      - sg
+  - url: 'https://www.gstatic.com/generate_204'
+    interval: 1800
     name: HK
     type: url-test
     proxies:
@@ -71,11 +79,14 @@ rules:
   - 'DOMAIN-KEYWORD,dmm,JP'
   - 'DOMAIN-KEYWORD,binance,JP'
   - 'GEOIP,JP,JP'
+  - 'DOMAIN-KEYWORD,pikpak,SG'
+  - 'GEOIP,SG,SG'
   - 'DOMAIN-KEYWORD,google,HK'
   - 'DOMAIN-KEYWORD,oculus,HK'
   - 'DOMAIN-KEYWORD,facebook,HK'
   - 'DOMAIN-KEYWORD,hentai,HK'
   - 'DOMAIN-KEYWORD,konachan,HK'
+  - 'DOMAIN-KEYWORD,youtube,HK'
   - 'GEOIP,HK,HK'
   - 'DOMAIN-KEYWORD,musicbrainz,HK'
   - 'DOMAIN-KEYWORD,openai,JP'

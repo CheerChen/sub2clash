@@ -32,8 +32,8 @@ services:
       - "7893:80"
     environment:
       CLASH_CONTROLLER: "192.168.0.110:9091"
-      SUB_WHITELIST: "日本,香港,美国,HK,JP,US"
-      SUB_BLACKLIST: "仅海外,回国,V1,游戏,广州"
+      SUB_WHITELIST: "日本,香港,美国,新加坡,HK,JP,US,SG"
+      SUB_BLACKLIST: "仅海外,回国"
       SUB_URLS: ""
       CRON: "*/30 * * * *"
     container_name: sub2clash

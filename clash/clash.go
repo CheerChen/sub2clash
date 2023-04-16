@@ -16,6 +16,8 @@ import (
 	"sub2clash/log"
 )
 
+const TplFile = "/configs/base.yaml"
+
 type Clash struct {
 	Port               int                      `yaml:"port"`
 	SocksPort          int                      `yaml:"socks-port"`
@@ -29,26 +31,20 @@ type Clash struct {
 	Proxy              []map[string]interface{} `yaml:"proxies"`
 	ProxyGroup         []map[string]interface{} `yaml:"proxy-groups"`
 	Rule               []string                 `yaml:"rules"`
-
-	// 兼容
-	// ProxyOld      []map[string]interface{} `yaml:"Proxy"`
-	// ProxyGroupOld []map[string]interface{} `yaml:"Proxy Group"`
-	// RuleOld       []string                 `yaml:"Rule"`
 }
 
 func (c *Clash) LoadTemplate(proxies []interface{}) ([]byte, error) {
-	tplFile := "/configs/base.yaml"
-	_, err := os.Stat(tplFile)
+	_, err := os.Stat(TplFile)
 	if err != nil && os.IsNotExist(err) {
-		return nil, fmt.Errorf("[%s] template doesn't exist", tplFile)
+		return nil, err
 	}
-	buf, err := ioutil.ReadFile(tplFile)
+	buf, err := ioutil.ReadFile(TplFile)
 	if err != nil {
-		return nil, fmt.Errorf("[%s] template open the failure", tplFile)
+		return nil, err
 	}
 	err = yaml.Unmarshal(buf, &c)
 	if err != nil {
-		return nil, fmt.Errorf("[%s] Template format error", tplFile)
+		return nil, err
 	}
 
 	c.Proxy = nil

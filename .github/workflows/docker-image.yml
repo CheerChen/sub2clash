@@ -22,5 +22,5 @@ jobs:
       with:
         context: .
         push: true
-        platforms: linux/amd64,linux/arm64,linux/arm
+        platforms: linux/amd64,linux/arm64
         tags: cheerchen37/sub2clash:latest

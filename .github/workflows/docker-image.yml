@@ -15,4 +15,4 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
     - name: Build the Docker image
-      run: docker buildx bake -f docker-bake.yaml --push
+      run: docker buildx --platform linux/arm64 bake -f docker-bake.yaml --push

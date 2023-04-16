@@ -1,6 +1,5 @@
 FROM golang:alpine as builder
 
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
 RUN apk add --no-cache make git
 
 WORKDIR /sub2clash-src

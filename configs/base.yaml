@@ -83,6 +83,7 @@ rules:
   - 'GEOIP,SG,SG'
   - 'DOMAIN-KEYWORD,google,HK'
   - 'DOMAIN-KEYWORD,oculus,HK'
+  - 'DOMAIN-KEYWORD,meta,HK'
   - 'DOMAIN-KEYWORD,facebook,HK'
   - 'DOMAIN-KEYWORD,hentai,HK'
   - 'DOMAIN-KEYWORD,konachan,HK'

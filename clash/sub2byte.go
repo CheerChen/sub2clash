@@ -19,7 +19,7 @@ func Sub2byte(subs []string) (b []byte, err error) {
 			log.Errorf("parse err in url %s, %s", u, err)
 			continue
 		}
-		bodyString, err = HttpGet(u, true)
+		bodyString, err = HttpGet(u, false)
 		if err != nil {
 			log.Errorf("get sub url err, %s", err)
 			continue

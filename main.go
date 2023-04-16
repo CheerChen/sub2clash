@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/NYTimes/gziphandler"
+	"github.com/fsnotify/fsnotify"
 	req "github.com/imroc/req/v3"
 	"github.com/julienschmidt/httprouter"
 	"github.com/robfig/cron/v3"
@@ -34,6 +35,22 @@ func main() {
 	c.Start()
 	Update()
 
+	// Set up file watcher
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		fmt.Println("Error creating watcher:", err)
+		return
+	}
+	defer watcher.Close()
+
+	err = watcher.Add(clash.TplFile)
+	if err != nil {
+		fmt.Println("Error adding file to watcher:", err)
+		return
+	}
+
+	go WatchBaseFile(watcher)
+
 	router := httprouter.New()
 	router.GET("/sub", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		http.ServeFile(w, r, "/configs/config.yaml")
@@ -42,6 +59,26 @@ func main() {
 	n := negroni.New(negroni.NewRecovery(), negroni.NewLogger())
 	n.UseHandler(gziphandler.GzipHandler(router))
 	n.Run(":80")
+}
+
+func WatchBaseFile(watcher *fsnotify.Watcher) {
+	for {
+		select {
+		case event, ok := <-watcher.Events:
+			if !ok {
+				return
+			}
+			if event.Op&fsnotify.Write == fsnotify.Write {
+				fmt.Println("File updated:", event.Name)
+				Update()
+			}
+		case err, ok := <-watcher.Errors:
+			if !ok {
+				return
+			}
+			fmt.Println("Error watching file:", err)
+		}
+	}
 }
 
 // Update update config file from subscribe url and put it into controller api

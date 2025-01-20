@@ -44,7 +44,7 @@ func buildVMess(s string) ClashVmess {
 	vmess := Vmess{}
 	err = json.Unmarshal(vmconfig, &vmess)
 	if err != nil {
-		log.Println(err)
+		log.Printf("Decode Vmess config %s", err)
 		return ClashVmess{}
 	}
 	clashVmess := ClashVmess{}

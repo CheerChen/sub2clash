@@ -1,9 +1,9 @@
 package clash
 
 import (
+	"log"
 	"net/url"
 	"strings"
-	"sub2clash/log"
 )
 
 type ClashSSR struct {
@@ -33,7 +33,7 @@ const (
 func buildSSR(s string) ClashSSR {
 	rawSSRConfig, err := Base64DecodeStripped(s)
 	if err != nil {
-		log.Errorf("Decode ssr config %s", err)
+		log.Printf("Decode ssr config %s", err)
 		return ClashSSR{}
 	}
 	//log.Infof(string(rawSSRConfig))
@@ -67,14 +67,14 @@ func buildSSR(s string) ClashSSR {
 	passwordBase64 := suffix[0]
 	password, err := Base64DecodeStripped(passwordBase64)
 	if err != nil {
-		log.Errorf("Decode password %s", err)
+		log.Printf("Decode password %s", err)
 		return ClashSSR{}
 	}
 	ssr.Password = string(password)
 
 	m, err := url.ParseQuery(suffix[1])
 	if err != nil {
-		log.Errorf("Parse url %s", err)
+		log.Printf("Parse url %s", err)
 		return ClashSSR{}
 	}
 
@@ -96,7 +96,7 @@ func buildSSR(s string) ClashSSR {
 		}
 	}
 	if errs != nil {
-		log.Errorf("Decode param failed, %s", err)
+		log.Printf("Decode param failed, %s", err)
 		return ClashSSR{}
 	}
 

@@ -2,10 +2,10 @@ package clash
 
 import (
 	"bytes"
+	"log"
 	"net/url"
 	"regexp"
 	"strings"
-	"sub2clash/log"
 )
 
 var ssReg = regexp.MustCompile(`(?m)ss://(\w+)@([^:]+):(\d+)#(.+)`)
@@ -31,7 +31,7 @@ type PluginOpts struct {
 func buildSS(s string) ClashSS {
 	s, err := url.PathUnescape(s)
 	if err != nil {
-		log.Errorf("Decode ss config err %s", err)
+		log.Printf("Decode ss config err %s", err)
 		return ClashSS{}
 	}
 	s = strings.Replace(s, "=", "", -1)
@@ -40,13 +40,13 @@ func buildSS(s string) ClashSS {
 	if len(findStr) < 5 {
 		findStr = ssReg2.FindStringSubmatch(s)
 		if len(findStr) < 3 {
-			log.Errorf("Decode ss config raw %s", s)
+			log.Printf("Decode ss config raw %s", s)
 			return ClashSS{}
 		}
 	}
 	rawSSRConfig, err := Base64DecodeStripped(findStr[1])
 	if err != nil {
-		log.Errorf("Decode ss config %s", err)
+		log.Printf("Decode ss config %s", err)
 		return ClashSS{}
 	}
 	if bytes.Contains(rawSSRConfig, []byte("@")) {

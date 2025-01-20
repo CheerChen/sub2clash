@@ -3,68 +3,76 @@ package clash
 import (
 	"errors"
 	"fmt"
+	"io"
+	"log"
+	"net/http"
 	"net/url"
-	"os"
 	"strings"
-	"sub2clash/log"
-
-	req "github.com/imroc/req/v3"
 )
 
-func Sub2byte(subs []string) (b []byte, err error) {
+func Sub2byte(subs []string) ([]byte, error) {
 	var proxies []interface{}
-	for _, u := range subs {
-		var bodyString string
-		if _, err = url.Parse(strings.TrimSpace(u)); err != nil {
-			log.Errorf("parse err in url %s, %s", u, err)
-			continue
-		}
-		bodyString, err = HttpGet(u, false)
-		if err != nil {
-			log.Errorf("get sub url err, %s", err)
-			continue
-		}
-		if len(bodyString) == 0 {
-			log.Errorf("get sub url err, %s", errors.New("the request body content is empty"))
+
+	for _, subURL := range subs {
+		// Validate URL
+		if _, err := url.Parse(strings.TrimSpace(subURL)); err != nil {
+			log.Printf("Parse error in URL %s: %v\n", subURL, err)
 			continue
 		}
 
+		// Fetch subscription content
+		bodyString, err := HttpGet(subURL)
+		if err != nil {
+			log.Printf("Failed to get subscription URL: %v\n", err)
+			continue
+		}
+
+		if len(bodyString) == 0 {
+			log.Printf("Error: the request body content is empty")
+			continue
+		}
+
+		// Parse the subscription content
 		p := ParseContent(bodyString)
-		log.Infof("parse content found %d proxies", len(p))
+		log.Printf("Parsed content found %d proxies\n", len(p))
 
 		proxies = append(proxies, p...)
 	}
+
+	// Check if we got any valid proxies
 	if len(proxies) == 0 {
-		return nil, errors.New("proxies is empty")
+		return nil, errors.New("no valid proxies found in subscriptions")
 	}
 
-	err = GetProxiesWithDelay(proxies)
+	// Get delay information for proxies
+	err := GetProxiesWithDelay(proxies)
 	if err != nil {
 		regionList = make(map[string][]string)
-		log.Warnf("get proxies err %s", err)
+		log.Printf("Warning: failed to get proxy delays: %v\n", err)
 	}
 
+	// Create and load Clash configuration
 	clash := &Clash{}
-	return clash.LoadTemplate(proxies)
+	config, err := clash.LoadTemplate(proxies)
+	if err != nil {
+		return nil, fmt.Errorf("failed to load template: %v", err)
+	}
+
+	return config, nil
 }
 
-func HttpGet(u string, useProxy bool) (string, error) {
-
-	log.Infof("req get %s", u)
-	client := req.C().DevMode()
-
-	if useProxy {
-		api := os.Getenv("CLASH_CONTROLLER")
-		api = strings.ReplaceAll(api, "9090", "7891")
-		proxyUrl := fmt.Sprintf("socks5://%s", api)
-		client.SetProxyURL(proxyUrl)
-		log.Infof("SetProxyUrl %s", proxyUrl)
+func HttpGet(targetURL string) (string, error) {
+	client := &http.Client{}
+	resp, err := client.Get(targetURL)
+	if err != nil {
+		return "", err
 	}
-	r, err := client.R().Get(u)
+	defer resp.Body.Close()
 
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
 	}
 
-	return r.ToString()
+	return string(body), nil
 }

@@ -6,14 +6,12 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"log"
 	"os"
 	"reflect"
 	"strings"
 
 	"gopkg.in/yaml.v2"
-
-	"sub2clash/log"
 )
 
 const TplFile = "/configs/base.yaml"
@@ -38,7 +36,7 @@ func (c *Clash) LoadTemplate(proxies []interface{}) ([]byte, error) {
 	if err != nil && os.IsNotExist(err) {
 		return nil, err
 	}
-	buf, err := ioutil.ReadFile(TplFile)
+	buf, err := os.ReadFile(TplFile)
 	if err != nil {
 		return nil, err
 	}
@@ -127,19 +125,37 @@ func Base64DecodeStripped(s string) ([]byte, error) {
 }
 
 func IsValidNode(nodeName string) bool {
-	blacklist := strings.Split(os.Getenv("SUB_BLACKLIST"), ",")
-	for _, keyword := range blacklist {
-		if strings.Contains(nodeName, keyword) {
-			return false
+	// Get blacklist and whitelist from env
+	blacklistStr := os.Getenv("SUB_BLACKLIST")
+	whitelistStr := os.Getenv("SUB_WHITELIST")
+
+	// Check blacklist first
+	if blacklistStr != "" {
+		blacklist := strings.Split(blacklistStr, ",")
+		for _, keyword := range blacklist {
+			if keyword != "" && strings.Contains(nodeName, keyword) {
+				log.Printf("Node %s blocked by blacklist rule: %s", nodeName, keyword)
+				return false
+			}
 		}
 	}
-	whitelist := strings.Split(os.Getenv("SUB_WHITELIST"), ",")
+
+	// If whitelist is empty, allow all non-blacklisted nodes
+	if whitelistStr == "" {
+		return true
+	}
+
+	// Check whitelist
+	whitelist := strings.Split(whitelistStr, ",")
 	for _, keyword := range whitelist {
-		if strings.Contains(nodeName, keyword) {
+		if keyword != "" && strings.Contains(nodeName, keyword) {
+			log.Printf("Node %s allowed by whitelist rule: %s", nodeName, keyword)
 			return true
 		}
 	}
 
+	// If whitelist is not empty and no match found, reject the node
+	log.Printf("Node %s rejected (not in whitelist)", nodeName)
 	return false
 }
 
@@ -147,7 +163,7 @@ func ParseContent(content string) []interface{} {
 	var proxies []interface{}
 	b, err := Base64DecodeStripped(content)
 	if err != nil {
-		log.Errorf("Decode fail content %s", err)
+		log.Printf("Decode fail content %s", err)
 		return proxies
 	}
 
@@ -175,6 +191,8 @@ func ParseContent(content string) []interface{} {
 			if vmess.Name != "" && IsValidNode(vmess.Name) {
 				proxies = append(proxies, vmess)
 			}
+		default:
+			log.Println(scanner.Text())
 		}
 
 	}

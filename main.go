@@ -10,7 +10,7 @@ import (
 	"github.com/robfig/cron/v3"
 	"github.com/urfave/negroni"
 
-	"sub2clash/clash"
+	"github.com/CheerChen/sub2clash/clash"
 )
 
 func main() {
